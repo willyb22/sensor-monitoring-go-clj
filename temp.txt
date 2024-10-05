@@ -1,0 +1,5 @@
+// Backend
+curl -X GET http://localhost:5000
+
+curl -X POST http://localhost:5000/user -H "Content-Type:application/json" -d "{\"name\": \"John Doe\", \"email\": \"john@doe.com\"}"
+curl -X POST http://localhost:5000/user -H "Content-Type:application/json" -d '{"name": "John Doe", "email": "john@doe.com"}'

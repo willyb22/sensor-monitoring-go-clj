@@ -1,0 +1,22 @@
+{
+    "root":".",
+    "ignore": [
+        "vendor/"
+    ],
+    "tmp_dir": "bin",
+    "watch": [
+        "cmd/go-backend", 
+        "controllers",
+        "models",
+        "routes",
+        "config"
+    ],
+    "build": {
+        "cmd": "go build -o bin/go-backend -mod=vendor ./cmd/go-backend",
+        "env": {}
+    },
+    "start": {
+        "cmd": "bin/go-backend",
+        "env": {}
+    }
+}

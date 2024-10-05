@@ -1,0 +1,6 @@
+# global
+.env
+
+# go-backend
+vendor
+tmp
