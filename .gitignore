@@ -4,3 +4,7 @@
 # go-backend
 vendor
 tmp
+
+# clj-monitoring
+repository
+.cpcache

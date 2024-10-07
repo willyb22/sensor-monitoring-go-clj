@@ -1,0 +1,13 @@
+{:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.bouncycastle/bcprov-jdk15on {:mvn/version "1.70"}
+        ring/ring {:mvn/version "1.9.5"}
+        compojure/compojure {:mvn/version "1.6.2"}
+        clj-http/clj-http {:mvn/version "3.12.3"}
+        cheshire/cheshire {:mvn/version "5.10.0"}
+        net.mikera/core.matrix {:mvn/version "0.63.0"}
+        incanter/incanter {:mvn/version "1.9.3" :exclusions [bouncycastle/bctsp-jdk14]}}
+ :main ^:skip-aot app.core
+ :target-path "target/%s"
+ :profiles {:dev {:dependencies [[org.clojure/tools.nrepl "0.2.13"]
+                                 [cider/cider-nrepl "0.26.0"]]
+                  :repl-options {:init-ns app.core}}}}
