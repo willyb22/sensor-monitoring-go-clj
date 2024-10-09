@@ -8,3 +8,5 @@ tmp
 # clj-monitoring
 repository
 .cpcache
+.clj-kondo
+.lsp

@@ -1,0 +1,1 @@
+-- this file is used for writing query directly into the terminal

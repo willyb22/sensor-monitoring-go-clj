@@ -6,6 +6,7 @@ import (
 	"go-backend/config"
 	"go-backend/middleware"
 	"go-backend/routes"
+	"go-backend/services"
 	"log"
 )
 
@@ -13,6 +14,9 @@ func main () {
 	log.Println("cmd/go-backend/main.go")
 	// Load config
 	config.LoadConfig()
+
+	// Connect to DB
+	services.Connect()
 
 	// Create a new fiber instance
 	app := fiber.New() // app is a pointer
@@ -32,6 +36,8 @@ func main () {
 	log.Printf("%#v\n", config.BackendConfig)
 	err := app.Listen(":"+config.BackendConfig.ServerPort)
 	if err != nil {
+		// close Database
+		defer services.SensorService.DB.Close()
 		panic(err)
 	}
 }

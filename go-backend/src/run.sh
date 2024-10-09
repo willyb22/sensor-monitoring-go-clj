@@ -3,7 +3,8 @@
 set -e
 # run fresh in the background
 # fresh &
-go build -o bin/go-backend -mod=vendor ./cmd/go-backend
+
+go build -a -o bin/go-backend -mod=vendor ./cmd/go-backend
 bin/go-backend &
 
 # run the simulation

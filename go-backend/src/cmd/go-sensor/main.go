@@ -12,56 +12,39 @@ import (
 	"bytes"
 )
 
-type SensorData struct {
-	SensorName string `json:"sensorname"`
-	Temperature float32 `json:"temperature"`
-	Humidity float32 `json:"humidity"`
-	Timestamp time.Time `json:"timestamp"`
-}
-
 var (
-	GO_BACKEND_URL string = "http://go-backend:5000" // os.Getenv("GO_BACKEND_URL")
-	GO_SENSOR_URL_WITHOUT_PROTOCOL string = os.Getenv("GO_SENSOR_URL_WITHOUT_PROTOCOL")
-
-	Data SensorData
-
+	GO_BACKEND_URL string = os.Getenv("GO_BACKEND_URL")
 	mu sync.Mutex
 )
 
-
 func main () {
-	// log.SetOutput()
-	serverReady := make(chan struct{}) 
-	go func(url string) {
-		for {
-			resp, err := http.Get(url)
-			// log.Printf("%#v\n", resp)
-			if err == nil && resp.StatusCode == http.StatusOK {
-				log.Println("Server is reachable. Proceeding with data generation...")
-				close(serverReady)               // Notify that the server is ready
-				return
-			}
-			log.Println("Waiting for the server to be ready...")
-			time.Sleep(5 * time.Second) // Wait before retrying
-		}
-	}(GO_BACKEND_URL) // "http://" + GO_SENSOR_URL_WITHOUT_PROTOCOL
-
-	// Generate Data
-	go GenerateSensorData(serverReady, &Data)
-	
-	select {}
-
+	pingBackend(GO_BACKEND_URL)
+	generateSensorData()
 }
+
+// Check if the server is ready
+func pingBackend (url string) {
+	for {
+		resp, err := http.Get(url)
+		// log.Printf("%#v\n", resp)
+		if err == nil && resp.StatusCode == http.StatusOK {
+			log.Println("Server is reachable. Proceeding with data generation...")
+			return
+		}
+		log.Println("Waiting for the server to be ready...")
+		time.Sleep(5 * time.Second) // Wait before retrying
+	}
+}
+
 // POST data to the backend
-func postDataToBackend() error {
-	
+func postDataToBackend(Data interface{}) error {
 	mu.Lock()
 	jsonData, err := json.Marshal(Data)
 	if err != nil {
 		log.Println("Error marshaling sensor data:", err)
 	}
 	defer mu.Unlock()
-
+	log.Printf("Sending data: %+v \n", string(jsonData))
 	resp, err := http.Post(GO_BACKEND_URL+"/sensor", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to post data: %w", err)
@@ -75,29 +58,100 @@ func postDataToBackend() error {
 
 	return nil
 }
-
 // Generate Data
-func GenerateSensorData(ready chan struct{}, data *SensorData) {
-	<-ready
-	log.Println("Generating Data ...")
-	// Begin
+func generateSensorData() {
+	rand.Seed(0)
+	log.Println("inside generateSensorData")
+	go generateBSSensorData()
+	go generateAQSSensorData()
+	go generateMSISensorData()
+
+	select {}
+}
+//
+func generateBSSensorData() {
+	log.Println("inside generateBSSensorData")
+	var numbers [30]int
+	for i:=0; i<30; i++ {
+		numbers[i] = i
+	}
 	for {
-		mu.Lock() // Lock before updating the data
-		*data = SensorData{
-			SensorName: fmt.Sprintf("sensor-%d", rand.Intn(100)),
-			Temperature: rand.Float32()*15 + 20,
-			Humidity: rand.Float32()*100,
-			Timestamp: time.Now(),
+		n := 5+rand.Intn(6)
+		rand.Shuffle(len(numbers), func(i, j int) {
+			numbers[i], numbers[j] = numbers[j], numbers[i]
+		})
+		for i:=0; i<n; i++ {
+			go func(j int){
+				var (
+					bs *BSSensorData
+					sd SensorData
+				)
+				bs = new(BSSensorData)
+				sd = bs
+				sd.GenerateData(j)
+				if err:=postDataToBackend(bs); err!=nil{
+					log.Println("Error")
+				}
+			}(numbers[i])
 		}
-		mu.Unlock() // Unlock after updating the data
+		time.Sleep(100*time.Second)
+	}
+}
 
-		err := postDataToBackend()
-		if err != nil {
-			log.Println("Error posting data to backend:", err)
-		} else {
-			log.Println("Successfully posted data to backend:", data)
+func generateAQSSensorData() {
+	log.Println("inside generateAQSSensorData")
+	var numbers [10]int
+	for i:=0; i<10; i++ {
+		numbers[i] = i
+	}
+	for {
+		n := 5+rand.Intn(6)
+		rand.Shuffle(len(numbers), func(i, j int) {
+			numbers[i], numbers[j] = numbers[j], numbers[i]
+		})
+		for i:=0; i<n; i++ {
+			go func(j int){
+				var (
+					aqs *AQSSensorData
+					sd SensorData
+				)
+				aqs = new(AQSSensorData)
+				sd = aqs
+				sd.GenerateData(j)
+				if err:=postDataToBackend(aqs); err!=nil{
+					log.Println("Error")
+				}
+			}(numbers[i])
 		}
+		time.Sleep(150*time.Second)
+	}
+}
 
-		time.Sleep(10*time.Second)
+func generateMSISensorData() {
+	log.Println("inside generateMSISensorData")
+	var numbers [5]int
+	for i:=0; i<5; i++ {
+		numbers[i] = i
+	}
+	for {
+		n := 1+rand.Intn(5)
+		rand.Shuffle(len(numbers), func(i, j int) {
+			numbers[i], numbers[j] = numbers[j], numbers[i]
+		})
+		for i:=0; i<n; i++ {
+			go func(j int){
+				var (
+					msi *MSISensorData
+					sd SensorData
+				)
+				msi = new(MSISensorData)
+				sd = msi
+				sd.GenerateData(j)
+				if err:=postDataToBackend(msi); err!=nil{
+					log.Println("Error")
+				}
+			}(numbers[i])
+		}
+		time.Sleep(200*time.Second)
 	}
 }

@@ -2,7 +2,7 @@
 
 set -e
 
-dirs=(go-sensor go-backend clj-monitoring)
+dirs=(postgres-db go-backend clj-monitoring)
 
 for dir in "${dirs[@]}"; do
     mkdir -p $dir/src
