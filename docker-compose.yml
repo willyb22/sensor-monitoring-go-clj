@@ -6,7 +6,7 @@ services:
       context: ./postgres-db
       dockerfile: Dockerfile
     volumes:
-      - postgres-data:/var/lib
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - postgres-network
     env_file:
@@ -42,26 +42,29 @@ services:
     depends_on:
       - postgres-db     
   
-  # clj-monitoring:
-  #   build:
-  #     context: ./clj-monitoring
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./clj-monitoring/repository:/root/.m2/repository
-  #     - ./clj-monitoring/src:/app
-  #   networks:
-  #     - postgres-network
-  #   env_file:
-  #     - ./clj-monitoring/.env
-  #   ports:
-  #     - "3000:3000"
-  #   tty: true
-  #   command: ["sh"]
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '1.0'
-  #         memory: 256M
+  clj-monitoring:
+    build:
+      context: ./clj-monitoring
+      dockerfile: Dockerfile
+    volumes:
+      - ./clj-monitoring/repository:/root/.m2/repository
+      - ./clj-monitoring/src:/app
+    networks:
+      - postgres-network
+    env_file:
+      - ./clj-monitoring/.env
+    ports:
+      - "3000:3000"
+    tty: true
+    command: ["sh"]
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+    depends_on:
+      - postgres-db
+      - go-backend
 
 volumes:
   postgres-data:

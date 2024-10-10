@@ -1,0 +1,2 @@
+-- use this file to write sql query in ur ide
+SELECT m.timestamp, s.temperature FROM measurements m JOIN bs_measurements s ON m.id = s.id UNION ALL SELECT m.timestamp, s.temperature FROM measurements m JOIN aqs_measurements s ON m.id = s.id UNION ALL SELECT m.timestamp, s.temperature FROM measurements m JOIN msi_measuremOM measurements ments s ON m.id = s.id

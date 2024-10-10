@@ -2,10 +2,13 @@
         org.bouncycastle/bcprov-jdk15on {:mvn/version "1.70"}
         ring/ring {:mvn/version "1.9.5"}
         compojure/compojure {:mvn/version "1.6.2"}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.3.865"}
+        org.postgresql/postgresql {:mvn/version "42.2.5"}
         clj-http/clj-http {:mvn/version "3.12.3"}
         cheshire/cheshire {:mvn/version "5.10.0"}
         net.mikera/core.matrix {:mvn/version "0.63.0"}
         incanter/incanter {:mvn/version "1.9.3" :exclusions [bouncycastle/bctsp-jdk14]}}
+ :paths ["src" "resources"]
  :main ^:skip-aot app.core
  :target-path "target/%s"
  :profiles {:dev {:dependencies [[org.clojure/tools.nrepl "0.2.13"]

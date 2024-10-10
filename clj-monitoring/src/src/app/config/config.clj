@@ -1,15 +1,13 @@
 (ns app.config.config)
 
-(def GoBackendURL (System/getenv "GO_BACKEND_URL"))
+(def go-backend-url (System/getenv "GO_BACKEND_URL"))
 
-(def AppConfig {
-    :SERVER_PORT (System/getenv "SERVER_PORT")
-})
+(def app-config {:server-port (System/getenv "SERVER_PORT")})
 
-(def DBConfig {
-    :DB_PORT (System/getenv "DB_PORT")
-    :DB_HOST (System/getenv "DB_HOST")
-    :DB_NAME (System/getenv "DB_NAME")
-    :DB_USER (System/getenv "DB_USER")
-    :DB_PASSWORD (System/getenv "DB_PASSWORD")
-})
+(def db-config {:classname "org.postgresql.Driver"
+                :dbtype "postgresql" 
+                :port (System/getenv "DB_PORT") 
+                :host (System/getenv "DB_HOST") 
+                :dbname (System/getenv "DB_NAME") 
+                :user (System/getenv "DB_USER") 
+                :password (System/getenv "DB_PASS")})
