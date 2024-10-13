@@ -1,6 +1,11 @@
 (ns app.models.sensor-model
   (:require [clojure.spec.alpha :as s]))
 
+(def measurement-map 
+  {:bs ["temperature" "humidity"]
+   :aqs ["temperature" "humidity" "co2_level"]
+   :msi ["temperature" "humidity" "air_pressure" "wind_speed"]})
+
 (def bs-sensor-data-schema
   {:id "int"
    :sensor_name "string"

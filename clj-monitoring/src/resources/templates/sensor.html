@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="/css/sensor.css">
+</head>
+<body>
+    <h1>Interactive plot!!!</h1>
+    <div id="result-test">
+        <p>test</p>
+        <!-- show test result -->
+    </div>
+    <div class="container">
+        <label for="sensor-name">Select sensor</label>
+        <select name="sensor-name" id="sensor-name">
+            {% for value in sensor-names %}
+            <option value="{{ value }}">{{ value }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="container">
+        <label for="measurement">Select measurement</label>
+        <select name="measurement" id="measurement" disabled></select>
+    </div>
+    <button id="trigger-plot" disabled>Plot</button>
+
+    <div id="plot-container">
+        <p>Select sensor to generate a plot.</p>
+    </div>
+    <script>
+        const sensorNameSelect = document.getElementById("sensor-name");
+        const measurementSelect = document.getElementById("measurement");
+        const triggerPlotBtn = document.getElementById("trigger-plot");
+        const plotContainer = document.getElementById("plot-container");
+
+        sensorNameSelect.addEventListener('change', function() {
+            const sensorName = sensorNameSelect.value;
+
+            // Clear existing options from the measurement select dropdown
+            measurementSelect.innerHTML = '';
+
+            // Extract the sensor type from the sensor name
+            const result = sensorName.match(/[a-zA-Z]+/g);
+            const sensorType = result ? result.join('') : '';
+
+            // Get the corresponding measurements for the selected sensor
+            fetch(`/sensor/measurements/${sensorType}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(value => {
+                        let option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = value;
+                        measurementSelect.appendChild(option);
+                    });
+                });
+            measurementSelect.disabled = false;
+            triggerPlotBtn.disabled = true;
+        });
+
+        measurementSelect.addEventListener('change', function() {
+            triggerPlotBtn.disabled = false;
+        });
+
+        triggerPlotBtn.addEventListener('click', function() {
+            const sensorName = sensorNameSelect.value;
+            const measurement = measurementSelect.value;
+
+            // Fetch data and plot the graph
+            fetch(`/sensor/data/${measurement}/${sensorName}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.map(x => x["timestamp"]));
+                    const plotData = [{
+                        x: data.map(x => x["timestamp"]),
+                        y: data.map(x => x[measurement]),
+                        mode: 'lines',
+                        type: 'scatter'
+                    }];
+                    const layout = {
+                        title: `Plot for ${measurement} measurements, sensor: ${sensorName}`,
+                        xaxis: {title: "timestamp"},
+                        yaxis: {title: measurement}
+                    };
+                    Plotly.newPlot(plotContainer, plotData, layout);
+                });
+        });
+    </script>
+</body>
+</html>

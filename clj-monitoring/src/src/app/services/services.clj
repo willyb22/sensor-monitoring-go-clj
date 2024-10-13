@@ -28,8 +28,8 @@
             (recur (ping-db-sub) (+ retry 1))))))
     true))
 
-(def datasource (jdbc/get-datasource db-config))
+(defn get-datasource [] (jdbc/get-datasource db-config))
 
-(def db-connection (jdbc/get-connection datasource))
+(defn get-db-connection [] (jdbc/get-connection (get-datasource)))
 
-(defn close-db [] (.close db-connection))
+(defn close-db [] (.close (get-db-connection)))

@@ -7,11 +7,9 @@
    [app.utils.misc :refer [str-to-int]]))
 
 (defn -main []
-  (println "App starting ...")
+  (println "App starting !!!")
   (println "Trying to connect to database")
   (ping-db 5)
   (run-jetty app-routes
              {:port (str-to-int (:server-port app-config))
-              :join false})
-  (close-db)
-  (print "App has stopped"))
+              :join? false}))

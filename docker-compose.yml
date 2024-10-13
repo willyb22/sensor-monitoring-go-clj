@@ -19,28 +19,28 @@ services:
           cpus: '1.0' 
           memory: 256M
           
-  go-backend:
-    build:
-      context: ./go-backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./go-backend/src:/app
-    env_file:
-      - ./go-backend/.env
-    ports:
-      - "5000:5000" 
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'   
-          memory: 256M  
-    tty: true
-    command: ["./run.sh"] # ["./run.sh"]
-    networks:
-      - sensor-network
-      - postgres-network
-    depends_on:
-      - postgres-db     
+  # go-backend:
+  #   build:
+  #     context: ./go-backend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./go-backend/src:/app
+  #   env_file:
+  #     - ./go-backend/.env
+  #   ports:
+  #     - "5000:5000" 
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '1.0'   
+  #         memory: 256M  
+  #   tty: true
+  #   command: ["./run.sh"] # ["./run.sh"]
+  #   networks:
+  #     - sensor-network
+  #     - postgres-network
+  #   depends_on:
+  #     - postgres-db     
   
   clj-monitoring:
     build:
@@ -64,7 +64,6 @@ services:
           memory: 256M
     depends_on:
       - postgres-db
-      - go-backend
 
 volumes:
   postgres-data:
